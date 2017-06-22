@@ -62,13 +62,13 @@
         {{/is}}
         {{else}}
         {{#is assertion 'expect'}}
-        expect(body).to.equal(null); // non-json response or no schema
+        expect(body).to.equal(null); // non-json response or no schema defined in swagger.json for this return.
         {{/is}}
         {{#is assertion 'should'}}
-        body.should.equal(null); // non-json response or no schema
+        body.should.equal(null); // non-json response or no schema defined in swagger.json for this return.
         {{/is}}
         {{#is assertion 'assert'}}
-        assert.isNull(body); // non-json response or no schema
+        assert.isNull(body); // non-json response or no schema defined in swagger.json for this return.
         {{/is}}
         {{/validateResponse}}
         done();
@@ -86,13 +86,13 @@
             {{#ifCond queryParameters queryApiKey}}
             qs: {
               {{#if queryApiKey}}{{queryApiKey.type}}: process.env.{{queryApiKey.name}}{{#if queryParameters}},
-              {{/if}}{{/if}}{{#if queryParameters}}{{#each queryParameters}}{{this.name}}: 'DATA GOES HERE'{{#unless @last}},{{/unless}}{{/each}}{{/if}}
+              {{/if}}{{/if}}{{#if queryParameters}}{{#each queryParameters}}{{this.name}}: 'DATA GOES HERE FOR QUERY'{{#unless @last}},{{/unless}}{{/each}}{{/if}}
             },
             {{/ifCond}}
             method: 'GET',
             headers: {
               'Content-Type': '{{contentType}}'{{#if headerParameters}},
-              {{#each headerParameters}}'{{this.name}}': 'DATA GOES HERE'{{#unless @last}},{{/unless}}{{/each}}{{/if}}{{#if headerApiKey}},
+              {{#each headerParameters}}'{{this.name}}': '{{headerify this defaultHeaderParameters}}'{{#unless @last}},{{/unless}}{{/each}}{{/if}}{{#if headerApiKey}},
               {{headerApiKey.type}}: process.env.{{headerApiKey.name}}{{/if}}{{#if headerSecurity}},
               Authorization: '{{headerSecurity.type}} ' + process.env.{{headerSecurity.name}}{{/if}}
             }

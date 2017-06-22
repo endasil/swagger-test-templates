@@ -1,21 +1,118 @@
 {
-  "name": "swagger-test-templates",
-  "version": "1.4.2",
+  "_args": [
+    [
+      {
+        "raw": "swagger-test-templates",
+        "scope": null,
+        "escapedName": "swagger-test-templates",
+        "name": "swagger-test-templates",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "C:\\mrgreen\\ms\\micro-config"
+    ]
+  ],
+  "_from": "swagger-test-templates@latest",
+  "_id": "swagger-test-templates@1.4.2",
+  "_inCache": true,
+  "_location": "/swagger-test-templates",
+  "_nodeVersion": "7.8.0",
+  "_npmOperationalInternal": {
+    "host": "packages-18-east.internal.npmjs.com",
+    "tmp": "tmp/swagger-test-templates-1.4.2.tgz_1494949833962_0.957600699737668"
+  },
+  "_npmUser": {
+    "name": "noahdietz",
+    "email": "noahdietz24@gmail.com"
+  },
+  "_npmVersion": "4.2.0",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "swagger-test-templates",
+    "scope": null,
+    "escapedName": "swagger-test-templates",
+    "name": "swagger-test-templates",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/swagger-test-templates/-/swagger-test-templates-1.4.2.tgz",
+  "_shasum": "40d84422d5ed712e2d7d398ffdfaf83e169dc06d",
+  "_shrinkwrap": null,
+  "_spec": "swagger-test-templates",
+  "_where": "C:\\mrgreen\\ms\\micro-config",
+  "bugs": {
+    "url": "https://github.com/apigee-127/swagger-test-templates/issues"
+  },
+  "dependencies": {
+    "handlebars": "^4.0.5",
+    "json-schema-deref-sync": "^0.3.1",
+    "lodash": "^3.10.0",
+    "sanitize-filename": "^1.3.0",
+    "string": "^3.3.0"
+  },
   "description": "Generate test code from a Swagger spec",
-  "main": "index.js",
-  "scripts": {
-    "test": "node mocha.js",
-    "pretest": "npm install && node pretest.js"
+  "devDependencies": {
+    "chai": "^3.0.0",
+    "dotenv": "^1.2.0",
+    "eslint": "^0.24.0",
+    "js-yaml": "^3.3.1",
+    "mocha": "^2.2.5",
+    "mocha-eslint": "^0.1.7",
+    "ncp": "^2.0.0",
+    "rewire": "^2.3.4",
+    "walk": "^2.3.9",
+    "z-schema": "^3.12.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@github.com/apigee-127/swagger-test-templates.git"
+  "directories": {},
+  "dist": {
+    "shasum": "40d84422d5ed712e2d7d398ffdfaf83e169dc06d",
+    "tarball": "http://npm.mrgreen.zone:1080/swagger-test-templates/-/swagger-test-templates-1.4.2.tgz"
   },
+  "gitHead": "49a826adf8922b50e068288504f32050ce0dff50",
+  "homepage": "https://github.com/apigee-127/swagger-test-templates#readme",
   "keywords": [
     "Swagger",
     "API",
     "Test"
   ],
+  "license": "MIT",
+  "main": "index.js",
+  "maintainers": [
+    {
+      "name": "mohsen",
+      "email": "me@azimi.me"
+    },
+    {
+      "name": "swagger",
+      "email": "mazimi+swagger@apigee.com"
+    },
+    {
+      "name": "noahdietz",
+      "email": "noahdietz24@gmail.com"
+    },
+    {
+      "name": "elsapeng",
+      "email": "elsa.peng@hotmail.com"
+    }
+  ],
+  "name": "swagger-test-templates",
+  "optionalDependencies": {},
+  "readme": "# Swagger Test Templates\n\n[![Build Status](https://travis-ci.org/apigee-127/swagger-test-templates.svg?branch=master)](https://travis-ci.org/apigee-127/swagger-test-templates)\n\n> Generate test code from a [Swagger](http://swagger.io) spec(version 2.0)\n\n## Usage\n\nInstall via npm\n\n```\nnpm install --save swagger-test-templates\n```\n\nUse your [Swagger](http://swagger.io) API spec file to generate test for your API.\n\n```javascript\nvar stt = require('swagger-test-templates');\nvar swagger = require('/path/to/swagger.json');\nvar config = {\n  assertionFormat: 'should',\n  testModule: 'supertest',\n  pathName: ['/user', '/user/{id}'],\n  loadTest: [{pathName:'/user', operation:'get', load:{requests: 1000, concurrent: 100}}, { /* ... */ }],\n  maxLen: 80,\n  pathParams: {\n    \"id\": \"0123\"\n  }\n};\n\n// Generates an array of objects containing the test file content, following specified configuration\n// the array contains objects with the scheme { name: <test-file-name>, test: <test-file-content> }\n// tests = [ {name: base-path-test.js, test: ... }, {name: users-test.js, test: ... }]\nvar tests = stt.testGen(swagger, config);\n```\n\n## API\n\n`swagger-test-templates` module exports a function with following arguments and return values:\n\n### Arguments\n\n* **`assertionFormat`** *required*: One of `should`, `expect` or `assert`. Choose which assertion method should be used in output test code.\n* **`testModule`** *required*: One of `supertest` or `request`. Choose between direct API calls (`request`) vs. programatic access to your API (`supertest`).\n* **`pathName`** *required*: List of path names available in your Swagger API spec used to generate tests for. Empty array leads to **all paths**.\n* **`statusCodes`** *optional* Array with status codes to generate tests for. Useful for generating only happy-flow tests. Excluding this param will generate tests for all responses.\n* **`loadTest`** *optional*: List of objects info in your Swagger API spec used to generate stress tests. If specify, pathName & operation are **required**. Optional fields requests defaults to `1000`, concurrent defaults to `100`.\n* **`maxLen`** *optional*: Maximum line length. If set to `-1`, descriptions will not be truncated. Defaults to `80`.\n* **`pathParams`** *optional*: Object containing the values of a specific path parameters.\n* **`templatesPath`** *optional* String indicating a custom handlebars-template path for generating the tests. Note: copy all the templates to your custom directory, this is a 'all-or-nothing' path\n* **`requestData`** *optional* Array containing data to send with the request See section on requestData for more details\n\n### Return value\n\nAn array in which each string is content of a test file and the file name. Use this information to write those files to disk.\n\n## Sending requestData\n\nBased on your schema there are a few modules out there that allow you to generate mock request payloads.\nYou can send this mock data along with the tests generated by this module by filling the `requestData` property of the module.\nThe mock data needs to have the following structure:\n\n### Mock HTTP request body\n\n```javascript\n{\n   '/endpoint': {\n       operation: {\n           'responseCode': [{ body: {}, description:'some description of the data']\n       }\n   }\n }\n\n```\n\n### Mock Path Paramters\n\n```javascript\n{\n   '/pet/{name}': {\n       get: {\n           '200': [{ name: 'spot', description:'some description of the data']\n       }\n   }\n }\n\n```\n\n### Mock Query Paramters\n\nThis will make a request to `/pet?name=spot` assuming that your swagger API has a definition for a `name` query parameter.\n\n```javascript\n{\n   '/pet': {\n       get: {\n           '200': [{ name: 'spot', description:'some description of the data']\n       }\n   }\n }\n\n```\n\n### Mock HTTP Headers\n\nThis will add an HTTP header `X-Token` set to `waestrydtufj` assuming that your swagger API has a definition for that header.\n\n```javascript\n{\n   '/pet': {\n       get: {\n           '200': [{ 'X-Token': 'waestrydtufj', description:'some description of the data']\n       }\n   }\n }\n\n```\n\nso, for example this could be:\n\n```javascript\n{\n     '/pet': {\n         post: {\n             '200': [{\n               body: {\n                  id: 1,\n                  otherProperty: 'some property that is a string'\n                 },\n                 description: 'the description for this data'\n               }]\n         },\n         get: {\n            '200': [ {\n              guid: 'some_string_to_place_in_path',\n              anotherPathParam: 100,\n              description: 'valid path or query parameters'\n            }]\n         }\n     }\n }\n```\n\nNote: for get-requests matching data will be transferred to the pathParams. So setting config.pathParams directly will have the same effect (see above).\n\nEvery mockData item in the `responseCode` array will be used to generate a test. The description will be added to the \"it\" function for reference.\n\n## License\n\n[MIT](/LICENSE)\n",
+  "readmeFilename": "README.md",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/apigee-127/swagger-test-templates.git"
+  },
+  "scripts": {
+    "pretest": "npm install && node pretest.js",
+    "test": "node mocha.js"
+  },
   "swagger-test-templates@1.0.0": [
     {
       "name": "Mohsen Azimi",
@@ -31,28 +128,5 @@
       "email": "noahdietz24@gmail.com"
     }
   ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/apigee-127/swagger-test-templates/issues"
-  },
-  "homepage": "https://github.com/apigee-127/swagger-test-templates#readme",
-  "devDependencies": {
-    "chai": "^3.0.0",
-    "dotenv": "^1.2.0",
-    "eslint": "^0.24.0",
-    "js-yaml": "^3.3.1",
-    "mocha": "^2.2.5",
-    "mocha-eslint": "^0.1.7",
-    "ncp": "^2.0.0",
-    "rewire": "^2.3.4",
-    "walk": "^2.3.9",
-    "z-schema": "^3.12.0"
-  },
-  "dependencies": {
-    "handlebars": "^4.0.5",
-    "json-schema-deref-sync": "^0.3.1",
-    "lodash": "^3.10.0",
-    "sanitize-filename": "^1.3.0",
-    "string": "^3.3.0"
-  }
+  "version": "1.4.2"
 }

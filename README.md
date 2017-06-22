@@ -73,7 +73,7 @@ The mock data needs to have the following structure:
 
 ```
 
-### Mock Path Parameters
+### Mock Path Paramters
 
 ```javascript
 {
@@ -86,7 +86,7 @@ The mock data needs to have the following structure:
 
 ```
 
-### Mock Query Parameters
+### Mock Query Paramters
 
 This will make a request to `/pet?name=spot` assuming that your swagger API has a definition for a `name` query parameter.
 

@@ -65,12 +65,18 @@ function getData(swagger, apiPath, operation, response, config, info) {
   var data = { // request payload
     responseCode: response,
     default: response === 'default' ? 'default' : null,
+    defaultHeaderParameters: [],
+    defaultPathParameters: [],
+    defaultFormParameters: [],
     description: (response + ' ' + responseDescription),
     assertion: config.assertionFormat,
     noSchema: true,
     bodyParameters: [],
+    defaultBodyParameters: [],
     queryParameters: [],
+    defaultQueryParameters: [],
     headerParameters: [],
+
     pathParameters: [],
     formParameters: [],
     queryApiKey: null,
@@ -88,6 +94,7 @@ function getData(swagger, apiPath, operation, response, config, info) {
   if (config.pathParams) {
     data.pathParams = config.pathParams;
   }
+
 
   // used for checking requestData table
   var requestPath = (swagger.basePath) ? path.posix.join(swagger.basePath, apiPath) : apiPath;
@@ -163,18 +170,32 @@ function getData(swagger, apiPath, operation, response, config, info) {
       switch (parameter.in) {
         case 'query':
           data.queryParameters.push(parameter);
+          data.defaultQueryParameters[parameter["name"]] = parameter["default"];
           break;
         case 'header':
           data.headerParameters.push(parameter);
+          if(parameter["default"]){
+            data.defaultHeaderParameters[parameter["name"]] = parameter["default"];
+          }
           break;
         case 'path':
           data.pathParameters.push(parameter);
+          if(!data.pathParams[parameter["name"]] && parameter["default"])
+          {
+            data.pathParams[parameter["name"]] = parameter["default"];
+          }
           break;
         case 'formData':
           data.formParameters.push(parameter);
+          if(parameter["default"]){
+            data.defaultFormParameters[parameter["name"]] = parameter["default"];
+          }
           break;
         case 'body':
           data.bodyParameters.push(parameter);
+          if(parameter["default"]){
+            data.defaultBodyParameters[parameter["name"]] = parameter["default"];
+          }
           break;
         default:
           throw new Error('The type is undefined.');
@@ -199,27 +220,32 @@ function getData(swagger, apiPath, operation, response, config, info) {
     data.path = requestPath;
   }
 
+  requestData["/config/{cultureCode}"]["get"]["200"] = [{ name: 'spot', description:'some description of the data']:
   // get requestData from config if defined for this path:operation:response
   if (config.requestData &&
     config.requestData[requestPath] &&
     config.requestData[requestPath][operation] &&
     config.requestData[requestPath][operation][response]) {
-    data.requestData = config.requestData[requestPath][operation][response];
-    // if we have requestData, fill the path params accordingly
-    var mockParameters = {};
+      data.requestData = config.requestData[requestPath][operation][response];
+      // if we have requestData, fill the path params accordingly
+      var mockParameters = {};
 
-    data.pathParameters.forEach(function(parameter) {
-      // find the mock data for this parameter name
-      mockParameters[parameter.name] = data.requestData.filter(function(mock) {
-        return mock.hasOwnProperty(parameter.name);
-      })[0][parameter.name];
-    });
-    // only write parameters if they are not already defined in config
-    // @todo we should rework this with code above to be more readable
-    if (!config.pathParams) {
-      data.pathParams = mockParameters;
-    }
+      data.pathParameters.forEach(function(parameter) {
+        // find the mock data for this parameter name
+        mockParameters[parameter.name] = data.requestData.filter(function(mock) {
+          return mock.hasOwnProperty(parameter.name);
+        })[0][parameter.name];
+      });
+      // only write parameters if they are not already defined in config
+      // @todo we should rework this with code above to be more readable
+      if (!config.pathParams) {
+        data.pathParams = mockParameters;
+      }
   }
+  // else {
+  //   if()
+  //
+  // }
   return data;
 }
 
@@ -416,7 +442,8 @@ function testGenPath(swagger, apiPath, config) {
     info.loadTest = config.loadTest;
   }
 
-  source = fs.readFileSync(path.join(config.templatesPath, '/outerDescribe.handlebars'), 'utf8');
+  let url = path.join(config.templatesPath, '/outerDescribe.handlebars');
+  source = fs.readFileSync(url, 'utf8');
   outerDescribeFn = handlebars.compile(source, {noEscape: true});
 
   _.forEach(childProperty, function(property, propertyName) {
@@ -555,6 +582,7 @@ handlebars.registerHelper('ifCond', helpers.ifCond);
 handlebars.registerHelper('validateResponse', helpers.validateResponse);
 handlebars.registerHelper('length', helpers.length);
 handlebars.registerHelper('pathify', helpers.pathify);
+handlebars.registerHelper('headerify', helpers.headerify);
 handlebars.registerHelper('printJSON', helpers.printJSON);
 handlebars.registerHelper('requestDataParamFormatter', helpers.requestDataParamFormatter);
 handlebars.registerHelper('isJsonRepresentation', helpers.isJsonRepresentation);
