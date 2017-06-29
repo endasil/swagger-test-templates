@@ -90,6 +90,8 @@ function getData(swagger, apiPath, operation, response, config, info) {
     pathParams: {}
   };
 
+
+
   // get pathParams from config
   if (config.pathParams) {
     data.pathParams = config.pathParams;
@@ -99,6 +101,17 @@ function getData(swagger, apiPath, operation, response, config, info) {
   // used for checking requestData table
   var requestPath = (swagger.basePath) ? path.posix.join(swagger.basePath, apiPath) : apiPath;
 
+  if(!config.requestData[requestPath]) {
+    config.requestData[requestPath] = {};
+  }
+
+  if(!config.requestData[requestPath][operation]){
+    config.requestData[requestPath][operation] = {};
+  }
+
+  if(!config.requestData[requestPath][operation][response]){
+    config.requestData[requestPath][operation][response] = [];
+  }
 
   // cope with loadTest info
   if (info.loadTest != null) {
@@ -166,24 +179,36 @@ function getData(swagger, apiPath, operation, response, config, info) {
   // deal with parameters in operation level
   if (grandProperty.hasOwnProperty('parameters')) {
     // only adds body parameters to request, ignores query params
+
     _.forEach(grandProperty.parameters, function(parameter) {
+      if(!config.requestData[requestPath][operation][response][parameter["name"]])
+      {
+        config.requestData[requestPath][operation][response]
+        let defaultValue = parameter["default"];
+        let paramName = parameter["name"];
+        let aa ={ [paramName]: defaultValue, "description": "default description"};
+      config.requestData[requestPath][operation][response].push(aa);
+
+      }
+//  {`${parameter["name"]}`:  `${}`}
       switch (parameter.in) {
         case 'query':
           data.queryParameters.push(parameter);
           data.defaultQueryParameters[parameter["name"]] = parameter["default"];
+
           break;
         case 'header':
           data.headerParameters.push(parameter);
           if(parameter["default"]){
-            data.defaultHeaderParameters[parameter["name"]] = parameter["default"];
+            config.requestData[requestPath][operation][response][parameter["name"]] = parameter["default"];
           }
           break;
         case 'path':
           data.pathParameters.push(parameter);
-          if(!data.pathParams[parameter["name"]] && parameter["default"])
-          {
-            data.pathParams[parameter["name"]] = parameter["default"];
-          }
+          // if(!data.pathParams[parameter["name"]] && parameter["default"])
+          // {
+          //   data.pathParams[parameter["name"]] = parameter["default"];
+          // }
           break;
         case 'formData':
           data.formParameters.push(parameter);
@@ -219,8 +244,18 @@ function getData(swagger, apiPath, operation, response, config, info) {
   } else {
     data.path = requestPath;
   }
+  // config.requestData = [];
+  // config.requestData ["/config/{cultureCode}"] = [];
+  // config.requestData ["/config/{cultureCode}"]["get"] = [];
+  // config.requestData ["/config/{cultureCode}"]["get"]["200"] = [];
+  // config.requestData["/config/{cultureCode}"]["get"]["200"] = [{ "x-mrg-client-type": 'superclient', description:'some description of the data'}];
 
-  requestData["/config/{cultureCode}"]["get"]["200"] = [{ name: 'spot', description:'some description of the data']:
+ // config.requestData = {
+  //   "/config/{cultureCode}": {
+  //  get: {
+  //    "200": [{"x-mrg-client-type": "waestrydtufj", description: "some description of the data"}]
+  //  }}};
+
   // get requestData from config if defined for this path:operation:response
   if (config.requestData &&
     config.requestData[requestPath] &&
@@ -232,9 +267,11 @@ function getData(swagger, apiPath, operation, response, config, info) {
 
       data.pathParameters.forEach(function(parameter) {
         // find the mock data for this parameter name
-        mockParameters[parameter.name] = data.requestData.filter(function(mock) {
+        let matchMock =  data.requestData.filter(function(mock) {
           return mock.hasOwnProperty(parameter.name);
-        })[0][parameter.name];
+        })
+
+        mockParameters[parameter.name] = matchMock ? undefined : matchMock[0][parameter.name];
       });
       // only write parameters if they are not already defined in config
       // @todo we should rework this with code above to be more readable
@@ -494,6 +531,9 @@ function testGen(swagger, config) {
   var schemaTemp;
   var environment;
   var ndx = 0;
+
+  if(!config.requestData)
+    config.requestData = [];
 
   config.templatesPath = (config.templatesPath) ? config.templatesPath : path.join(__dirname, 'templates');
 
