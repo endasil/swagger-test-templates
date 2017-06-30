@@ -186,7 +186,7 @@ function getData(swagger, apiPath, operation, response, config, info) {
         config.requestData[requestPath][operation][response]
         let defaultValue = parameter["default"];
         let paramName = parameter["name"];
-        let aa ={ [paramName]: defaultValue, "description": "default description"};
+        let aa ={ [paramName]: defaultValue, "description": "using default value for " + paramName};
       config.requestData[requestPath][operation][response].push(aa);
 
       }
@@ -271,7 +271,7 @@ function getData(swagger, apiPath, operation, response, config, info) {
           return mock.hasOwnProperty(parameter.name);
         })
 
-        mockParameters[parameter.name] = matchMock ? undefined : matchMock[0][parameter.name];
+        mockParameters[parameter.name] = matchMock ?  matchMock[0][parameter.name] : undefined ;
       });
       // only write parameters if they are not already defined in config
       // @todo we should rework this with code above to be more readable
