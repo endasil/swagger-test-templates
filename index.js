@@ -565,7 +565,7 @@ function testGen(swagger, config) {
   if (!targets || targets.length === 0) {
     _.forEach(result, function(results) {
       output.push({
-        name: '-test.js',
+        name: '.spec.js',
         test: results
       });
     });
@@ -613,6 +613,22 @@ function testGen(swagger, config) {
       name: '.env',
       test: envText
     });
+  }
+  try
+  {
+    fs.mkdirSync("./test/specs2");
+  }
+  catch(err)
+  {
+    if(err.code != "EEXIST")
+    {
+      throw err;
+    }
+  }
+
+  for(let i = 0; i < output.length; i++ )
+  {
+    fs.writeFileSync("./test/specs2/" + output[i].name, output[i].test);
   }
   return output;
 }
