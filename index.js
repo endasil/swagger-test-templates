@@ -33,7 +33,7 @@ var url = require('url');
 var path = require('path');
 var deref = require('json-schema-deref-sync');
 var helpers = require('./lib/helpers.js');
-
+const merge = require('merge');
 /**
  * To check if it is an empty array or undefined
  * @private
@@ -179,17 +179,19 @@ function getData(swagger, apiPath, operation, response, config, info) {
   // deal with parameters in operation level
   if (grandProperty.hasOwnProperty('parameters')) {
     // only adds body parameters to request, ignores query params
-
+    let paramSettings = {};
     _.forEach(grandProperty.parameters, function(parameter) {
+
       if(!config.requestData[requestPath][operation][response][parameter["name"]])
       {
         config.requestData[requestPath][operation][response]
         let defaultValue = parameter["default"];
         let paramName = parameter["name"];
-        let aa ={ [paramName]: defaultValue, "description": "using default value for " + paramName};
-      config.requestData[requestPath][operation][response].push(aa);
+
+        paramSettings = merge.recursive(true, paramSettings, { [paramName]: defaultValue});
 
       }
+
 //  {`${parameter["name"]}`:  `${}`}
       switch (parameter.in) {
         case 'query':
@@ -226,6 +228,12 @@ function getData(swagger, apiPath, operation, response, config, info) {
           throw new Error('The type is undefined.');
       }
     });
+
+    if(paramSettings != {})
+    {
+      paramSettings.description = "using default parameters.";
+      config.requestData[requestPath][operation][response].push(paramSettings);
+    }
   }
 
   if (grandProperty.responses[response].hasOwnProperty('schema')) {
