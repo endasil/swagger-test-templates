@@ -34,7 +34,8 @@ var path = require('path');
 var deref = require('json-schema-deref-sync');
 var helpers = require('./lib/helpers.js');
 const merge = require('merge');
-/**
+
+  /**
  * To check if it is an empty array or undefined
  * @private
  * @param  {array/object} val an array to be checked
@@ -231,7 +232,7 @@ function getData(swagger, apiPath, operation, response, config, info) {
 
     if(paramSettings != {})
     {
-      paramSettings.description = "using default parameters.";
+      paramSettings.description = "using default parameters taken from swagger when test was generated.";
       config.requestData[requestPath][operation][response].push(paramSettings);
     }
   }
@@ -528,7 +529,8 @@ function testGenPath(swagger, apiPath, config) {
  * @param  {json} config configuration for testGen
  * @returns {string|Array} set of all tests for a swagger API
  */
-function testGen(swagger, config) {
+module.exports.testGen = function testGen(swagger, config) {
+
   var paths = swagger.paths;
   var targets = config.pathName;
   var result = [];
@@ -540,8 +542,19 @@ function testGen(swagger, config) {
   var environment;
   var ndx = 0;
 
+
   if(!config.requestData)
     config.requestData = [];
+
+
+  if(!config.assertionFormat)
+  {
+    config.assertionFormat = 'expect';
+  }
+  if(!config.testModule)
+  {
+    config.testModule = 'request'
+  }
 
   config.templatesPath = (config.templatesPath) ? config.templatesPath : path.join(__dirname, 'templates');
 
@@ -624,7 +637,7 @@ function testGen(swagger, config) {
   }
   try
   {
-    fs.mkdirSync("./test/specs2");
+    fs.mkdirSync("./test/generated");
   }
   catch(err)
   {
@@ -636,7 +649,7 @@ function testGen(swagger, config) {
 
   for(let i = 0; i < output.length; i++ )
   {
-    fs.writeFileSync("./test/specs2/" + output[i].name, output[i].test);
+    fs.writeFileSync("./test/generated/" + output[i].name, output[i].test);
   }
   return output;
 }
@@ -653,6 +666,4 @@ handlebars.registerHelper('isJsonRepresentation', helpers.isJsonRepresentation);
 handlebars.registerHelper('isJsonMediaType', helpers.isJsonMediaType);
 
 
-module.exports = {
-  testGen: testGen
-};
+

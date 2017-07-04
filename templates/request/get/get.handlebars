@@ -1,4 +1,4 @@
-  it('should respond with {{length description}}{{#if requestMessage}} and {{requestMessage}}{{/if}}', function(done) {
+  it('should respond with {{length description}}{{#if requestMessage}} {{requestMessage}}{{/if}}', function(done) {
       {{#validateResponse returnType noSchema}}
       /*eslint-disable*/
       {{> schema-partial this}}
@@ -25,26 +25,24 @@
           Authorization: '{{headerSecurity.type}} ' + process.env.{{headerSecurity.name}}{{/if}}
         }
       },
-      function(error, res, body) {
-        if (error) return done(error);
-
+      function(error, res, body) {        
         {{#is assertion 'expect'}}
         {{#if default}}
-        expect(res.statusCode).to.equal('DEFAULT RESPONSE CODE HERE');
+        expect(res.statusCode).to.equal('DEFAULT RESPONSE CODE HERE OR USE DEFAULT VALUES IN SWAGGER TO AUTOGENERATE');
         {{else}}
         expect(res.statusCode).to.equal({{responseCode}});
         {{/if}}
         {{/is}}
         {{#is assertion 'should'}}
         {{#if default}}
-        res.statusCode.should.equal('DEFAULT RESPONSE CODE HERE');
+        res.statusCode.should.equal('DEFAULT RESPONSE CODE HERE OR USE DEFAULT VALUES IN SWAGGER TO AUTOGENERATE');
         {{else}}
         res.statusCode.should.equal({{responseCode}});
         {{/if}}
         {{/is}}
         {{#is assertion 'assert'}}
         {{#if default}}
-        assert.equal(res.statusCode, 'DEFAULT RESPONSE CODE HERE');
+        assert.equal(res.statusCode, 'DEFAULT RESPONSE CODE HERE OR USE DEFAULT VALUES IN SWAGGER TO AUTOGENERATE');
         {{else}}
         assert.equal(res.statusCode, {{responseCode}});
         {{/if}}
@@ -104,9 +102,7 @@
         printResponses: false, // true or false
         printReport: true, // true or false
         printSteps: true, // true or false
-        callback: function(error, report) {
-          if (error) return done(error);
-
+        callback: function(error, report) {          
           {{#is assertion 'expect'}}
           expect(report.successfulResponses.length).
           to.equal(report.results.length);

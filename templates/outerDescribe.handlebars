@@ -5,6 +5,11 @@ var customFormats = {{customFormats}}
 customFormats(ZSchema);
 
 var validator = new ZSchema({});{{/if}}
+{{#if localMicroServiceTests}}
+const nock = require('nock');
+nock.disableNetConnect();
+nock.enableNetConnect('http://127.0.0.1');
+{{/if}}
 {{#is testmodule 'request'}}
 var request = require('request');
 {{/is}}
