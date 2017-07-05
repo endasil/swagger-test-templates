@@ -5,10 +5,16 @@ var customFormats = {{customFormats}}
 customFormats(ZSchema);
 
 var validator = new ZSchema({});{{/if}}
-{{#if localMicroServiceTests}}
+{{#if msMode}}
+{{#if msPath}}
+const server = require('{{msPath}}');
+{{else}}
+const server = require('../../lib/ENTER PATH HERE');
+{{/if}}
+{{queryApiKey.name}}
 const nock = require('nock');
 nock.disableNetConnect();
-nock.enableNetConnect('http://127.0.0.1');
+nock.enableNetConnect('http://localhost');
 {{/if}}
 {{#is testmodule 'request'}}
 var request = require('request');
@@ -36,6 +42,20 @@ require('dotenv').load();
 {{/if}}
 
 describe('{{description}}', function() {
+
+{{#if msMode}}
+  before(function (done) {
+      server.startServer(done);
+  });
+
+  after(function (done) {
+      server.stopServer(done);
+  });
+
+  afterEach(function () {
+      nock.cleanAll();
+  });
+{{/if}}
 {{#each tests}}
   {{this}}
 {{/each}}

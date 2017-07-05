@@ -336,10 +336,10 @@ function testGenResponse(swagger, apiPath, operation, response, config, consume,
 
   if (data.requestData && data.requestData.length > 0) {
     result = '';
-    for (var i = 0; i < data.requestData.length; i++) {
+    for (let i = 0; i < data.requestData.length; i++) {
       data.request = JSON.stringify(data.requestData[i].body);
 
-      for (var key in data.requestData[i]) {
+      for (let key in data.requestData[i]) {
         if (['body', 'description'].indexOf(key) === -1) {
           data.requestParameters[key] = data.requestData[i][key];
         }
@@ -500,9 +500,10 @@ function testGenPath(swagger, apiPath, config) {
   });
 
   var output = '';
+  // zschema stuff
   var customFormats = fs.readFileSync(require.resolve('./custom-formats'), 'utf-8');
 
-  var data = {
+  var data =   {
     description: apiPath,
     assertion: config.assertionFormat,
     testmodule: config.testModule,
@@ -512,7 +513,9 @@ function testGenPath(swagger, apiPath, config) {
     tests: result,
     importValidator: info.importValidator,
     importEnv: info.importEnv,
-    importArete: info.importArete
+    importArete: info.importArete,
+    msMode: config.msMode,
+    msPath: config.msPath
   };
 
   if (!allDeprecated) {

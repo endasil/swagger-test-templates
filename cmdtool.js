@@ -1,17 +1,18 @@
 var path = require('path');
 const tt = require("./index.js")
-console.log( process.argv);
+console.log(process.argv);
 var argv = require('yargs').argv;
-let config = {};
+const config = {
+  assertionFormat: 'expect',
+  testModule: 'request',
+  templatesPath: ''
+};
+
 let swaggerPath = "";
 console.log(argv["swagger"]);
 
-if(argv["host"])
-{
-  config.host =argv["host"];
-}
 
-if(argv["swagger"]) {
+if (argv["swagger"]) {
   swaggerPath = argv["swagger"];
 }
 else {
@@ -19,23 +20,22 @@ else {
   return;
 }
 
-if(argv["host"]) {
-  config.host = argv["host"];
-}
-else {
-  config.host = "`127.0.0.1:${appConfig.listenPort}`";
-}
-
 let pathToSwagger = path.resolve(__dirname, swaggerPath);
 console.log(pathToSwagger);
 let swagger = require(pathToSwagger);
 
-const config2 = {
-  assertionFormat: 'expect',
-  testModule: 'request',
-  templatesPath: ''
-  //host: "127.0.0.1:" + appConfig.listenPort
-  //  pathParams : {"x-mrg-client-type": "web", "cultureCode": "sv-SE", "market": "se"}
-};
+if (argv["msmode"]) {
+  swagger.host = "localhost:' + appConfig.listenPort + '";
+  config.msMode = true;
+  config.msPath = "../../lib/" + swagger.info.title + "-server.js";
+}
+if (argv["mspath"]) {
+  config.msPath = argv["mspath"];
+}
 
-tt.testGen(swagger, config2);
+if (argv["host"]) {
+  swagger.host = argv["host"];
+}
+
+
+tt.testGen(swagger, config);
