@@ -1,5 +1,6 @@
 var path = require('path');
 const tt = require("./index.js")
+console.log( process.argv);
 var argv = require('yargs').argv;
 let config = {};
 let swaggerPath = "";

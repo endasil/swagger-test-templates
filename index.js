@@ -61,7 +61,7 @@ function getData(swagger, apiPath, operation, response, config, info) {
   var grandProperty = swagger.paths[apiPath][operation];
   var securityType;
 
-  var responseDescription = (swagger.paths[apiPath][operation].responses[response]) ?
+  var responseDescription = (swagger.paths[apiPath][operation].responses[response].description) ?
     swagger.paths[apiPath][operation].responses[response].description : '';
   var data = { // request payload
     responseCode: response,
@@ -185,7 +185,7 @@ function getData(swagger, apiPath, operation, response, config, info) {
 
       if(!config.requestData[requestPath][operation][response][parameter["name"]])
       {
-        config.requestData[requestPath][operation][response]
+
         let defaultValue = parameter["default"];
         let paramName = parameter["name"];
 
@@ -230,9 +230,9 @@ function getData(swagger, apiPath, operation, response, config, info) {
       }
     });
 
-    if(paramSettings != {})
+    if(paramSettings !== {})
     {
-      paramSettings.description = "using default parameters taken from swagger when test was generated.";
+      paramSettings.description = "";
       config.requestData[requestPath][operation][response].push(paramSettings);
     }
   }
@@ -278,7 +278,7 @@ function getData(swagger, apiPath, operation, response, config, info) {
         // find the mock data for this parameter name
         let matchMock =  data.requestData.filter(function(mock) {
           return mock.hasOwnProperty(parameter.name);
-        })
+        });
 
         mockParameters[parameter.name] = matchMock ?  matchMock[0][parameter.name] : undefined ;
       });
@@ -641,7 +641,7 @@ module.exports.testGen = function testGen(swagger, config) {
   }
   catch(err)
   {
-    if(err.code != "EEXIST")
+    if(err.code !== "EEXIST")
     {
       throw err;
     }
