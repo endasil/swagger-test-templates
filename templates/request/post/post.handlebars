@@ -1,4 +1,4 @@
-  it('should respond with {{length description}}{{#if requestMessage}} and {{requestMessage}}{{/if}}', function(done) {
+  it("should respond with {{length description}}{{#if requestMessage}} and {{requestMessage}}{{/if}}", function(done) {
       {{#validateResponse returnType noSchema}}
       /*eslint-disable*/
       {{> schema-partial this}}
@@ -89,13 +89,13 @@
         {{/is}}
         {{else}}
         {{#is assertion 'expect'}}
-        expect(body).to.equal(null); // non-json response or no schema
+        // expect(body).to.equal(null); // non-json response or no schema defined in swagger.json
         {{/is}}
         {{#is assertion 'should'}}
-        body.should.equal(null); // non-json response or no schema
+        // body.should.equal(null); // non-json response or no schema defined in swagger.json
         {{/is}}
         {{#is assertion 'assert'}}
-        assert.isNull(body); // non-json response or no schema
+     //   assert.isNull(body); // non-json response or no schema defined in swagger.json
         {{/is}}
         {{/validateResponse}}
         done();

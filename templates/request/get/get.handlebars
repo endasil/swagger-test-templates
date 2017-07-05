@@ -1,4 +1,4 @@
-  it('should respond with {{length description}}{{#if requestMessage}} {{requestMessage}}{{/if}}', function(done) {
+  it("should respond with {{length description}}{{#if requestMessage}} {{requestMessage}}{{/if}}", function(done) {
       {{#validateResponse returnType noSchema}}
       /*eslint-disable*/
       {{> schema-partial this}}
@@ -60,20 +60,20 @@
         {{/is}}
         {{else}}
         {{#is assertion 'expect'}}
-        expect(body).to.equal(null); // non-json response or no schema defined in swagger.json for this return.
+         // expect(body).to.equal(null); // non-json response or no schema defined in swagger.json for this return.
         {{/is}}
         {{#is assertion 'should'}}
-        body.should.equal(null); // non-json response or no schema defined in swagger.json for this return.
+        // body.should.equal(null); // non-json response or no schema defined in swagger.json for this return.
         {{/is}}
         {{#is assertion 'assert'}}
-        assert.isNull(body); // non-json response or no schema defined in swagger.json for this return.
+        // assert.isNull(body); // non-json response or no schema defined in swagger.json for this return.
         {{/is}}
         {{/validateResponse}}
         done();
       });
     });
 {{#if isLoadTest}}
-    it('load tests with {{length description}}', function(done) {
+    it("load tests with {{length description}}", function(done) {
       arete.loadTest({
         name: '{{loadName}}',
         requests: {{requests}},

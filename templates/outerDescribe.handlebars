@@ -1,12 +1,13 @@
 'use strict';
-var chai = require('chai');{{#if importValidator}}
-var ZSchema = require('z-schema');
-var customFormats = {{customFormats}}
+const chai = require('chai');{{#if importValidator}}
+const ZSchema = require('z-schema');
+const customFormats = {{customFormats}}
 customFormats(ZSchema);
 
-var validator = new ZSchema({});{{/if}}
+let validator = new ZSchema({});{{/if}}
 {{#if msMode}}
 {{#if msPath}}
+const appConfig = require('../../config.json');
 const server = require('{{msPath}}');
 {{else}}
 const server = require('../../lib/ENTER PATH HERE');
@@ -17,31 +18,31 @@ nock.disableNetConnect();
 nock.enableNetConnect('http://localhost');
 {{/if}}
 {{#is testmodule 'request'}}
-var request = require('request');
+let request = require('request');
 {{/is}}
 {{#is testmodule 'supertest'}}
-var supertest = require('supertest');
-var api = supertest('{{scheme}}://{{host}}'); // supertest init;
+let supertest = require('supertest');
+let api = supertest('{{scheme}}://{{host}}'); // supertest init;
 {{/is}}
 {{#is assertion 'expect'}}
-var expect = chai.expect;
+let expect = chai.expect;
 {{/is}}
 {{#is assertion 'should'}}
 
 chai.should();
 {{/is}}
 {{#is assertion 'assert'}}
-var assert = chai.assert;
+let assert = chai.assert;
 {{/is}}
 {{#if importArete}}
-var arete = require('arete');
+let arete = require('arete');
 {{/if}}
 {{#if importEnv}}
 
 require('dotenv').load();
 {{/if}}
 
-describe('{{description}}', function() {
+describe("{{description}}", function() {
 
 {{#if msMode}}
   before(function (done) {

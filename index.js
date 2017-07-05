@@ -638,22 +638,6 @@ module.exports.testGen = function testGen(swagger, config) {
       test: envText
     });
   }
-  try
-  {
-    fs.mkdirSync("./test/generated");
-  }
-  catch(err)
-  {
-    if(err.code !== "EEXIST")
-    {
-      throw err;
-    }
-  }
-
-  for(let i = 0; i < output.length; i++ )
-  {
-    fs.writeFileSync("./test/generated/" + output[i].name, output[i].test);
-  }
   return output;
 }
 

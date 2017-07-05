@@ -1,7 +1,8 @@
-var path = require('path');
+const path = require('path');
+const fs = require('fs');
 const tt = require("./index.js")
 console.log(process.argv);
-var argv = require('yargs').argv;
+const argv = require('yargs').argv;
 const config = {
   assertionFormat: 'expect',
   testModule: 'request',
@@ -36,6 +37,27 @@ if (argv["mspath"]) {
 if (argv["host"]) {
   swagger.host = argv["host"];
 }
+let savePath = "./generated-tests/specs/";
+if(argv["savepath"])
+{
+  savePath = argv["savepath"];
+}
+let output = tt.testGen(swagger, config);
 
+try
+{
+  fs.mkdirSync(savePath);
+}
+catch(err)
+{
+  if(err.code !== "EEXIST")
+  {
+    throw err;
+  }
+}
 
-tt.testGen(swagger, config);
+for(let i = 0; i < output.length; i++ )
+{
+  console.log("saving file: " + savePath + output[i].name);
+  fs.writeFileSync(savePath + output[i].name, output[i].test);
+}
