@@ -1,5 +1,6 @@
 const path = require('path');
 const fs = require('fs');
+const mkdirp = require("mkdirp")
 const tt = require("./index.js")
 console.log(process.argv);
 const argv = require('yargs').argv;
@@ -46,7 +47,7 @@ let output = tt.testGen(swagger, config);
 
 try
 {
-  fs.mkdirSync(savePath);
+  mkdirp.sync(savePath);
 }
 catch(err)
 {
